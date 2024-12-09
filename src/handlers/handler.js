@@ -4,6 +4,7 @@ const firestore = require('../config/firestore');
 const { Firestore } = require('@google-cloud/firestore');
 const { success, error } = require('../utils/responseHelper');
 const path = require('path');
+const Hapi = require('@hapi/hapi');
 
 
 // Recommendation Handler
@@ -174,8 +175,8 @@ const getRecommendation = async (request, h) => {
     try {
         // Debugging: Periksa apakah payload ada
         console.log('Received Payload:', request.payload);
-        console.log('Payload received in handler:', request.payload);
 
+        // Validasi keberadaan payload
         if (!request.payload) {
             console.error('Error: Payload is undefined');
             return h.response({
@@ -187,19 +188,29 @@ const getRecommendation = async (request, h) => {
 
         // Validasi input
         if (!weight || !height || !gender || !age || !activityLevel) {
-            throw new Error('Incomplete input data');
+            return h.response({
+                message: 'Incomplete input data',
+            }).code(400);
         }
         if (height <= 0 || isNaN(height)) {
-            throw new Error('Height must be a positive number.');
+            return h.response({
+                message: 'Height must be a positive number.',
+            }).code(400);
         }
         if (weight <= 0 || isNaN(weight)) {
-            throw new Error('Weight must be a positive number.');
+            return h.response({
+                message: 'Weight must be a positive number.',
+            }).code(400);
         }
         if (age <= 0 || isNaN(age)) {
-            throw new Error('Age must be a positive number.');
+            return h.response({
+                message: 'Age must be a positive number.',
+            }).code(400);
         }
         if (!['male', 'female'].includes(gender.toLowerCase())) {
-            throw new Error('Gender must be either "male" or "female".');
+            return h.response({
+                message: 'Gender must be either "male" or "female".',
+            }).code(400);
         }
 
         // Kalkulasi BMI
@@ -217,18 +228,18 @@ const getRecommendation = async (request, h) => {
         const activityFactor = activityFactors[activityLevel.toLowerCase()] || defaultActivityFactor;
 
         // Kalkulasi kalori
-        const maintenanceCalories = bmi * activityFactor;
-        const bulkingCalories = maintenanceCalories + 500;
-        const cuttingCalories = maintenanceCalories - 500;
+        const mengidealkanCalories = bmi * activityFactor;
+        const menggemukkanCalories = mengidealkanCalories + 500;
+        const menguruskanCalories = mengidealkanCalories - 500;
 
         // Menentukan program berdasarkan BMI
-        const program = bmi < 18.5 ? 'bulking' : bmi > 25 ? 'cutting' : 'maintenance';
+        const program = bmi < 18.5 ? 'menggemukkan' : bmi > 25 ? 'menguruskan' : 'mengidealkan';
 
         // Peta foto berdasarkan program
         const photoMap = {
-            bulking: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Gemuk.jpg',
-            cutting: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Kurus.jpg',
-            maintenance: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Ideal.jpg',
+            menggemukkan: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Gemuk.jpg',
+            menguruskan: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Kurus.jpg',
+            mengidealkan: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Ideal.jpg',
         };
         const photoLink = photoMap[program] || 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Default.jpg';
 
@@ -250,9 +261,9 @@ const getRecommendation = async (request, h) => {
             message: 'Recommendation generated successfully',
             data: {
                 id: docRef.id,
-                maintenance: maintenanceCalories,
-                bulking: bulkingCalories,
-                cutting: cuttingCalories,
+                mengidealkan: mengidealkanCalories,
+                menggemukkan: menggemukkanCalories,
+                menguruskan: menguruskanCalories,
                 program: program,
                 photo: photoLink,
             },
