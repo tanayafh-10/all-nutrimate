@@ -2,7 +2,7 @@
 FROM node:18.18.0
 
 # Set working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Salin package.json dan package-lock.json
 COPY package*.json ./
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Ekspose port aplikasi
-EXPOSE 3000
+EXPOSE 8080
 
 # Jalankan aplikasi
 CMD ["node", "server.js"]
