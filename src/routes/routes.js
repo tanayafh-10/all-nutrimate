@@ -49,24 +49,25 @@ const routes = (server) => {
             handler: async (request, h) => {
                 try {
                     console.log('Received Payload:', request.payload);
-
-                    const recommendation = await handler.getRecommendation(request.payload);
-
+    
+                    // Panggil handler.getRecommendation dengan seluruh request
+                    const recommendation = await handler.getRecommendation(request, h);
+    
                     console.log('Generated Recommendation:', recommendation);
-
+    
                     return h.response(recommendation).code(200);
                 } catch (error) {
-                    console.error('Error during recommendation processing:', error);
-
+                    console.error('Error during recommendation processing:', error.message);
+    
                     return h.response({
                         message: 'Internal server error',
                         error: error.message,
-                        stack: error.stack,
                     }).code(500);
                 }
             },
         },
     ]);
+    
 };
 
 module.exports = routes;
