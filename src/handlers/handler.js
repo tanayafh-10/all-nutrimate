@@ -234,13 +234,13 @@ const getRecommendation = async (request, h) => {
         // Menentukan program berdasarkan BMI
         const program = bmi < 18.5 ? 'menggemukkan' : bmi > 25 ? 'menguruskan' : 'mengidealkan';
 
-        // Peta foto berdasarkan program
-        const photoMap = {
-            menggemukkan: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Gemuk.jpg',
-            menguruskan: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Kurus.jpg',
-            mengidealkan: 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Ideal.jpg',
+        // Status berdasarkan program
+        const statusMap = {
+            menggemukkan: 'Gemuk',
+            menguruskan: 'Kurus',
+            mengidealkan: 'Ideal',
         };
-        const photoLink = photoMap[program] || 'https://storage.googleapis.com/recommendasi-meals/recomendasi/Default.jpg';
+        const status = statusMap[program] || 'Ideal';
 
         // Simpan ke Firestore
         const recommendationsRef = db.collection('recommendations');
@@ -264,7 +264,7 @@ const getRecommendation = async (request, h) => {
                 menggemukkan: menggemukkanCalories,
                 menguruskan: menguruskanCalories,
                 program: program,
-                photo: photoLink,
+                status: status, // Status baru
             },
         }).code(200);
     } catch (error) {
@@ -275,6 +275,7 @@ const getRecommendation = async (request, h) => {
         }).code(500);
     }
 };
+
 
 
 
