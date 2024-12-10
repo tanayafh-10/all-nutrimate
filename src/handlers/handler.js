@@ -10,7 +10,6 @@ const Hapi = require('@hapi/hapi');
 // Recommendation Handler
 const db = new Firestore({
     projectId: 'intricate-gamma-443612-g6',
-    keyFilename: path.join(__dirname, 'application_default_credentials.json'),
 });
 
 // Helper untuk menghitung status BMI (untuk progress)
