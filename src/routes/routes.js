@@ -1,5 +1,5 @@
 const handler = require('../handlers/handler');
-const accessValidation = require('../middleware/accessValidation');
+const accsessValidation = require('../middleware/accsessValidation');
 
 const routes = (server) => {
     // Auth Routes
@@ -18,7 +18,7 @@ const routes = (server) => {
             method: 'GET',
             path: '/users',
             options: {
-                pre: [{ method: accessValidation }], // Middleware validasi akses
+                pre: [{ method: accsessValidation }], // Middleware validasi akses
             },
             handler: handler.getAllUsers,
         },
@@ -26,7 +26,7 @@ const routes = (server) => {
             method: 'DELETE',
             path: '/users/{id}',
             options: {
-                pre: [{ method: accessValidation }], // Middleware validasi akses
+                pre: [{ method: accsessValidation }], // Middleware validasi akses
             },
             handler: handler.deleteUser,
         },
